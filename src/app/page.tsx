@@ -5,12 +5,14 @@ import { SUBJECTS_DATA, ModuleData } from '../data/questions';
 
 export default function ExamPage() {
     const [view, setView] = useState<'home' | 'quiz' | 'results'>('home');
-    const [activeModuleCode, setActiveModuleCode] = useState<'DSNM' | 'WAN' | null>(null);
+    const [activeModuleCode, setActiveModuleCode] = useState<'DSNM' | 'WAN' | 'WC' | 'ISM' | null>(null);
     const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
     const [timeLeft, setTimeLeft] = useState(3600);
     const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
-    const [modalModule, setModalModule] = useState<'DSNM' | 'WAN' | null>(null);
+    const [modalModule, setModalModule] = useState<'DSNM' | 'WAN' | 'WC' | 'ISM' | null>(null);
     const [agreed, setAgreed] = useState(false);
+    const [startIndex, setStartIndex] = useState(0);
+    const [cheatWarning, setCheatWarning] = useState<string | null>(null);
 
     const activeModule: ModuleData | null = activeModuleCode ? SUBJECTS_DATA[activeModuleCode] : null;
     const questions = activeModule?.questions || [];
@@ -25,9 +27,72 @@ export default function ExamPage() {
         return () => clearInterval(timer);
     }, [view]);
 
+    // Disable right click and copying/inspection across the application
+    useEffect(() => {
+        const handleContextMenu = (e: MouseEvent) => {
+            e.preventDefault();
+        };
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Prevent F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U (Inspection & Source)
+            if (
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+                (e.ctrlKey && e.key === 'u') ||
+                (e.metaKey && e.altKey && (e.key === 'i' || e.key === 'j' || e.key === 'c')) ||
+                (e.metaKey && e.key === 'u')
+            ) {
+                e.preventDefault();
+            }
+
+            // Prevent Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+P (Copy, Paste, Cut, Print)
+            if (
+                (e.ctrlKey || e.metaKey) &&
+                (e.key === 'c' || e.key === 'v' || e.key === 'x' || e.key === 'p')
+            ) {
+                e.preventDefault();
+            }
+        };
+
+        document.addEventListener('contextmenu', handleContextMenu);
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('contextmenu', handleContextMenu);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
     useEffect(() => {
         if (timeLeft === 0 && view === 'quiz') handleSubmit();
     }, [timeLeft, view]);
+
+    // Anti-cheat: Tab-switching and Fullscreen exit detection
+    useEffect(() => {
+        if (view !== 'quiz') return;
+
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                setCheatWarning("Tab switching detected! Your exam has been automatically submitted and flagged.");
+                handleSubmit();
+            }
+        };
+
+        const handleFullscreenChange = () => {
+            if (!document.fullscreenElement) {
+                setCheatWarning("Fullscreen mode exited! Your exam has been automatically submitted and flagged.");
+                handleSubmit();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        };
+    }, [view]);
 
     const formatTime = (seconds: number) => {
         const h = Math.floor(seconds / 3600);
@@ -43,7 +108,7 @@ export default function ExamPage() {
 
     const handleSubmit = () => setView('results');
 
-    const openModal = (moduleCode: 'DSNM' | 'WAN') => {
+    const openModal = (moduleCode: 'DSNM' | 'WAN' | 'WC' | 'ISM') => {
         setModalModule(moduleCode);
         setAgreed(false);
     };
@@ -53,12 +118,21 @@ export default function ExamPage() {
         setAgreed(false);
     };
 
-    const confirmStart = () => {
+    const confirmStart = async () => {
         if (!modalModule || !agreed) return;
         setActiveModuleCode(modalModule);
         setCurrentQuestionIdx(0);
         setSelectedAnswers({});
         setTimeLeft(3600);
+
+        try {
+            if (document.documentElement.requestFullscreen) {
+                await document.documentElement.requestFullscreen();
+            }
+        } catch (err) {
+            console.error("Fullscreen request failed", err);
+        }
+
         setView('quiz');
         closeModal();
     };
@@ -75,9 +149,68 @@ export default function ExamPage() {
         </header>
     );
 
+    const renderCheatWarning = () => {
+        if (!cheatWarning) return null;
+        return (
+            <div className="modal-backdrop" style={{ zIndex: 9999, background: 'rgba(50, 0, 0, 0.85)' }}>
+                <div className="modal-box" style={{ maxWidth: '450px', padding: '40px 30px', textAlign: 'center', background: '#fff' }}>
+                    <div style={{ fontSize: '3.5rem', marginBottom: '10px' }}>⚠️</div>
+                    <h2 style={{ fontSize: '1.8rem', color: '#b71c1c', margin: '0 0 15px 0', fontWeight: 800 }}>Security Violation</h2>
+                    <p style={{ fontSize: '1.05rem', color: '#333', marginBottom: '30px', lineHeight: 1.6 }}>
+                        {cheatWarning}
+                    </p>
+                    <button
+                        onClick={() => setCheatWarning(null)}
+                        style={{
+                            background: 'linear-gradient(135deg, #b71c1c, #800000)',
+                            color: '#fff',
+                            border: 'none',
+                            padding: '12px 35px',
+                            borderRadius: '8px',
+                            fontSize: '1rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 15px rgba(183, 28, 28, 0.4)',
+                            transition: 'all 0.2s'
+                        }}
+                    >
+                        Acknowledge
+                    </button>
+                    <div style={{ marginTop: '20px', fontSize: '0.8rem', color: '#888' }}>
+                        This incident has been recorded.
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderFooter = () => (
+        <footer className="home-footer">
+            <span>&#169; 2026 Created by Vehan Rajintha</span>
+            <a href="https://github.com/VehanRajintha" target="_blank" rel="noopener noreferrer" className="footer-github-link" aria-label="GitHub Profile">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+                </svg>
+            </a>
+        </footer>
+    );
+
     // ── HOME ─────────────────────────────────────────────────────────────────────
     if (view === 'home') {
         const mod = modalModule ? SUBJECTS_DATA[modalModule] : null;
+        const allModules = ['DSNM', 'WAN', 'WC', 'ISM'] as const;
+
+        const handleNext = () => {
+            if (startIndex < allModules.length - 3) {
+                setStartIndex(prev => prev + 1);
+            }
+        };
+
+        const handlePrev = () => {
+            if (startIndex > 0) {
+                setStartIndex(prev => prev - 1);
+            }
+        };
 
         return (
             <div className="container" style={{ backgroundColor: '#fff', minHeight: '100vh', color: '#000', display: 'flex', flexDirection: 'column' }}>
@@ -91,26 +224,84 @@ export default function ExamPage() {
                         <h3 className="sub-category">CSNE - Computer Systems &amp; Network Engineering</h3>
                     </div>
 
-                    <div className="module-selection-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '25px', padding: '20px 0' }}>
-                        {(['DSNM', 'WAN'] as const).map((code) => (
-                            <div key={code} className="module-card" style={{ margin: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
-                                <h1 className="module-title" style={{ fontSize: '1.2rem', marginBottom: '15px' }}>{SUBJECTS_DATA[code].title}</h1>
-                                <div className="practice-notice" style={{ fontSize: '0.85rem', marginBottom: '15px' }}>
-                                    <p>Professional simulation of the official SLIIT exam experience.</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '20px 0', width: '100%' }}>
+                        <button
+                            onClick={handlePrev}
+                            disabled={startIndex === 0}
+                            style={{
+                                borderRadius: '50%',
+                                border: 'none',
+                                backgroundColor: startIndex === 0 ? '#f0f0f0' : '#800000',
+                                color: startIndex === 0 ? '#ccc' : '#fff',
+                                cursor: startIndex === 0 ? 'not-allowed' : 'pointer',
+                                width: '40px',
+                                height: '40px',
+                                fontSize: '1.2rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                            }}
+                        >
+                            &#10094;
+                        </button>
+
+                        <div style={{ display: 'flex', gap: '25px', flex: 1, overflow: 'hidden', padding: '10px 0' }}>
+                            {allModules.map((code) => (
+                                <div
+                                    key={code}
+                                    className="module-card"
+                                    style={{
+                                        margin: 0,
+                                        height: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        flex: '0 0 calc((100% - 50px) / 3)',
+                                        transition: 'transform 0.5s ease-in-out',
+                                        transform: `translateX(calc(-${startIndex * 100}% - ${startIndex * 25}px))`
+                                    }}
+                                >
+                                    <h1 className="module-title" style={{ fontSize: '1.2rem', marginBottom: '15px' }}>{SUBJECTS_DATA[code].title}</h1>
+                                    <div className="practice-notice" style={{ fontSize: '0.85rem', marginBottom: '15px' }}>
+                                        <p>Professional simulation of the official SLIIT exam experience.</p>
+                                    </div>
+                                    <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '20px', flex: 1 }}>
+                                        <ul style={{ paddingLeft: '20px', margin: 0 }}>
+                                            <li>Questions: {SUBJECTS_DATA[code].questions.length}</li>
+                                            <li>Time: 60 Minutes</li>
+                                        </ul>
+                                    </div>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <button className="start-btn" onClick={() => openModal(code)} style={{ padding: '10px 30px', fontSize: '0.95rem' }}>
+                                            Start Attempt
+                                        </button>
+                                    </div>
                                 </div>
-                                <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '20px', flex: 1 }}>
-                                    <ul style={{ paddingLeft: '20px', margin: 0 }}>
-                                        <li>Questions: {SUBJECTS_DATA[code].questions.length}</li>
-                                        <li>Time: 60 Minutes</li>
-                                    </ul>
-                                </div>
-                                <div style={{ textAlign: 'center' }}>
-                                    <button className="start-btn" onClick={() => openModal(code)} style={{ padding: '10px 30px', fontSize: '0.95rem' }}>
-                                        Start Attempt
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={handleNext}
+                            disabled={startIndex >= allModules.length - 3}
+                            style={{
+                                borderRadius: '50%',
+                                border: 'none',
+                                backgroundColor: startIndex >= allModules.length - 3 ? '#f0f0f0' : '#800000',
+                                color: startIndex >= allModules.length - 3 ? '#ccc' : '#fff',
+                                cursor: startIndex >= allModules.length - 3 ? 'not-allowed' : 'pointer',
+                                width: '40px',
+                                height: '40px',
+                                fontSize: '1.2rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                            }}
+                        >
+                            &#10095;
+                        </button>
                     </div>
 
                     <div style={{ maxWidth: '1200px', margin: '20px auto', padding: '0 20px' }}>
@@ -120,14 +311,7 @@ export default function ExamPage() {
                     </div>
                 </main>
 
-                <footer className="home-footer">
-                    <span>&#169; 2026 Created by Vehan Rajintha</span>
-                    <a href="https://github.com/VehanRajintha" target="_blank" rel="noopener noreferrer" className="footer-github-link" aria-label="GitHub Profile">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
-                        </svg>
-                    </a>
-                </footer>
+                {renderFooter()}
 
                 {/* ── Disclaimer Modal — inlined JSX so React never remounts it on state change ── */}
                 {mod && (
@@ -152,11 +336,11 @@ export default function ExamPage() {
                                 </div>
                             </div>
                             <div className="modal-body">
-                                <div className="modal-instructions-grid">
+                                <div className="modal-instructions-grid" style={{ gridTemplateColumns: '1fr' }}>
                                     <div className="modal-instruction-item"><span className="mi-icon">⏱</span><div><strong>Timed Exam</strong><br />60 minutes total. Timer starts immediately.</div></div>
                                     <div className="modal-instruction-item"><span className="mi-icon">🔄</span><div><strong>Free Navigation</strong><br />Jump between questions using the side panel.</div></div>
                                     <div className="modal-instruction-item"><span className="mi-icon">⚡</span><div><strong>Auto-Submit</strong><br />Quiz submits automatically when time runs out.</div></div>
-                                    <div className="modal-instruction-item"><span className="mi-icon">🖥</span><div><strong>Desktop Only</strong><br />Use a desktop/laptop for the best experience.</div></div>
+                                    <div className="modal-instruction-item" style={{ background: '#fff0f0', borderColor: '#ffcdd2', color: '#b71c1c' }}><span className="mi-icon">🔒</span><div><strong>Anti-Cheat Enabled</strong><br />Exam will launch in Full-Screen. Leaving Full-Screen or switching tabs will <strong>instantly auto-submit</strong> your exam.</div></div>
                                 </div>
                                 <div className="modal-disclaimer">
                                     <span className="modal-disclaimer-icon">⚠</span>
@@ -176,6 +360,7 @@ export default function ExamPage() {
                         </div>
                     </div>
                 )}
+                {renderCheatWarning()}
             </div>
         );
     }
@@ -214,6 +399,8 @@ export default function ExamPage() {
                         Inquiry
                     </a>
                 </main>
+                {renderFooter()}
+                {renderCheatWarning()}
             </div>
         );
     }
@@ -237,7 +424,24 @@ export default function ExamPage() {
 
                 <section className="question-area">
                     <div className="question-box">
-                        <p style={{ marginBottom: '20px', fontSize: '1.1rem' }}>{currentQuestion.text}</p>
+                        {currentQuestion.imageUrl ? (
+                            <div style={{ marginBottom: '20px' }}>
+                                <Image
+                                    src={currentQuestion.imageUrl}
+                                    alt={`Question ${currentQuestion.id}`}
+                                    width={800}
+                                    height={200}
+                                    style={{
+                                        width: '100%',
+                                        maxWidth: '800px',
+                                        height: 'auto',
+                                        objectFit: 'contain'
+                                    }}
+                                />
+                            </div>
+                        ) : (
+                            <p style={{ marginBottom: '20px', fontSize: '1.1rem' }}>{currentQuestion.text}</p>
+                        )}
                         <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '15px' }}>Select one:</p>
                         {currentQuestion.options.map((opt, i) => (
                             <div key={i} className="option">
@@ -269,6 +473,7 @@ export default function ExamPage() {
                     </div>
                 </aside>
             </main>
+            {renderCheatWarning()}
         </div>
     );
 }

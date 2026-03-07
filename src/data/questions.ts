@@ -2,6 +2,7 @@ export interface Question {
     id: number;
     type: 'single' | 'multiple';
     text: string;
+    imageUrl?: string;
     options: string[];
     marks: number;
 }
@@ -135,7 +136,137 @@ export const WAN_DATA: ModuleData = {
     }
 };
 
-export const SUBJECTS_DATA = {
+export const WC_DATA: ModuleData = {
+    title: "WC - Wireless Communications",
+    code: "WC",
+    questions: [
+        { id: 1, text: "", imageUrl: "/wc_q1.png", options: ["A", "B", "C", "D"], type: 'single', marks: 1.0 },
+        { id: 2, text: "Which signal propagation model is considered complex and impractical for most general wireless analysis despite its theoretical foundations?", options: ["Ray tracing models", "Maxwell's equations", "Free space models", "Single-slope path loss exponent model"], type: 'single', marks: 1.0 },
+        { id: 3, text: "", imageUrl: "/wc_q3.png", options: ["A", "B", "C", "D"], type: 'single', marks: 1.0 },
+        { id: 4, text: "Which antenna type is described as a theoretical 'point' that transmits energy equally in all directions?", options: ["Paraboloid reflector", "Dipole antenna", "Monopole antenna", "Isotropic antenna"], type: 'single', marks: 1.0 },
+        { id: 5, text: "A standard monopole antenna typically consists of a single conductor with a length equal to which of the following?", options: ["λ", "λ/4", "λ/8", "λ/2"], type: 'single', marks: 1.0 },
+        { id: 6, text: "What is the characteristic shape of the 3D radiation pattern for a standard dipole antenna?", options: ["A perfect sphere", "A pyramid", "A donut shape", "A narrow cone"], type: 'single', marks: 1.0 },
+        { id: 7, text: "Which IEEE 802.11 standard was the first to introduce Multi-User MIMO (MU-MIMO) and support channel bandwidths up to 160 MHz in the 5 GHz band?", options: ["802.11ax (Wi-Fi 6)", "802.11ac (Wi-Fi 5)", "802.11n (Wi-Fi 4)", "802.11g"], type: 'single', marks: 1.0 },
+        { id: 8, text: "In a Centralized WLAN Architecture, what is the role of the Wireless LAN Controller (WLC) regarding user data traffic?", options: ["It acts as a primary DNS server for all wireless clients.", "It serves as a data distribution point, with APs tunneling all user traffic to it.", "It functions only to provide power to the APs via Ethernet cables.", "It only handles management frames, leaving data to be switched locally by APs."], type: 'single', marks: 1.0 },
+        { id: 9, text: "Which MAC protocol in the 802.11 standard involves the Access Point polling stations to grant them permission to transmit in a contention-free service?", options: ["Distributed Co-ordinated Function (DCF)", "Point Co-ordinated Function (PCF)", "Frequency Hopping Spread Spectrum (FHSS)", "Carrier Sense Multiple Access with Collision Detection (CSMA/CD)"], type: 'single', marks: 1.0 },
+        { id: 10, text: "According to the 802.11 client state machine, what characterizes 'State 3' of a client's connectivity?", options: ["Connected to the Internet with a valid IP address", "Authenticated, but not associated", "Authenticated and associated, pending RSN authentication", "Unauthenticated and Unassociated"], type: 'single', marks: 1.0 },
+        { id: 11, text: "In the context of the basic communication model, what is the fundamental difference between 'Data' and 'Signals'?", options: ["Data is the message itself; signals are the electrical or electromagnetic representations that travel over the medium.", "Data is analog, while signals are always digital.", "Signals are the rules for communication, while data is the physical medium.", "There is no difference; the terms are interchangeable in wireless theory"], type: 'single', marks: 1.0 },
+        { id: 12, text: "Which 802.11 standard is designed to operate in unused TV bands (White Spaces) between 54 MHz and 790 MHz?", options: ["802.11ad", "802.11af", "802.11be", "802.11ah"], type: 'single', marks: 1.0 },
+        { id: 13, text: "In the 2.4 GHz ISM band, how many non-overlapping 20 MHz channels are available for standard 802.11 usage?", options: ["3", "11", "14", "1"], type: 'single', marks: 1.0 },
+        { id: 14, text: "What is the highest order of modulation supported by the upcoming 802.11be (Wi-Fi 7) standard?", options: ["1024-QAM", "64-QAM", "256-QAM", "4096-QAM"], type: 'single', marks: 1.0 },
+        { id: 15, text: "Why are Ray Tracing models considered superior to the 2-path model for certain environment analyses?", options: ["They do not require site-specific information.", "They treat signals as particles and consider reflections, scattering, and diffraction.", "They use Maxwell's equations directly for every point.", "They are easier to calculate by hand."], type: 'single', marks: 1.0 },
+        { id: 16, text: "Which antenna consists of a single conductor folded into a total length of λ/2?", options: ["Horn antenna", "Folded dipole", "Yagi array", "Monopole"], type: 'single', marks: 1.0 },
+        { id: 17, text: "In the 802.11 standard, what happens during the 'Distributed Co-ordinated Function' (DCF) phase of a superframe?", options: ["Stations are forbidden from transmitting to save power.", "The network switches from 2.4 GHz to 5 GHz automatically.", "The AP assigns specific time slots to every station.", "All stations must contend for medium access using a collision avoidance algorithm."], type: 'single', marks: 1.0 },
+        { id: 18, text: "What is the maximum theoretical data rate for the 802.11ax (Wi-Fi 6) standard as per the 802.11 physical layer specifications?", options: ["54 Mbps", "9.6 Gbps", "600 Mbps", "46 Gbps"], type: 'single', marks: 1.0 },
+        { id: 19, text: "In a centralized WLAN architecture, 'Lightweight APs' offload certain network functions to the WLC. Which of the following is NOT a primary function of the WLC?", options: ["Management of AP configurations", "Data aggregation and distribution", "Generation of the radio carrier wave for the station's antenna", "Control of roaming handoffs"], type: 'single', marks: 1.0 },
+        { id: 20, text: "", imageUrl: "/wc_q20.png", options: ["A", "B", "C", "D"], type: 'single', marks: 1.0 },
+        { id: 21, text: "What type of antenna is typically shaped as a 'dish' to act as a paraboloid reflector for high-gain directional communication?", options: ["Monopole antenna", "Horn antenna", "Reflector antenna (Dish)", "Yagi antenna"], type: 'single', marks: 1.0 },
+        { id: 22, text: "When a wireless client is in 'State 2' of the 802.11 connectivity process, what action has just been successfully completed?", options: ["Active scanning for SSIDs", "802.11 Authentication", "802.11 Association", "DHCP IP address assignment"], type: 'single', marks: 1.0 },
+        { id: 23, text: "The 802.11b standard, introduced in 1999, uses which type of spectrum usage/modulation technique?", options: ["MIMO", "DSSS", "OFDM", "FHSS"], type: 'single', marks: 1.0 },
+        { id: 24, text: "A Yagi-Uda antenna (or Yagi array) is primarily categorized as what kind of antenna?", options: ["Isotropic", "Aperture antenna", "Directional array", "Simple dipole"], type: 'single', marks: 1.0 },
+        { id: 25, text: "In 802.11 wireless networking, what is the standard channel bandwidth used by the legacy 802.11b and 802.11g standards?", options: ["20 MHz", "80 MHz", "40 MHz", "160 MHz"], type: 'single', marks: 1.0 }
+    ],
+    answers: {
+        1: "B",
+        2: "Maxwell's equations",
+        3: "C",
+        4: "Isotropic antenna",
+        5: "λ/4",
+        6: "A donut shape",
+        7: "802.11ac (Wi-Fi 5)",
+        8: "It serves as a data distribution point, with APs tunneling all user traffic to it.",
+        9: "Point Co-ordinated Function (PCF)",
+        10: "Authenticated and associated, pending RSN authentication",
+        11: "Data is the message itself; signals are the electrical or electromagnetic representations that travel over the medium.",
+        12: "802.11af",
+        13: "3",
+        14: "4096-QAM",
+        15: "They treat signals as particles and consider reflections, scattering, and diffraction.",
+        16: "Folded dipole",
+        17: "All stations must contend for medium access using a collision avoidance algorithm.",
+        18: "9.6 Gbps",
+        19: "Generation of the radio carrier wave for the station's antenna",
+        20: "C",
+        21: "Reflector antenna (Dish)",
+        22: "802.11 Authentication",
+        23: "DSSS",
+        24: "Directional array",
+        25: "20 MHz"
+    }
+};
+
+export const ISM_DATA: ModuleData = {
+    title: "ISM - Information Storage and Management",
+    code: "ISM",
+    questions: [
+        { id: 1, text: "Which of the following describes the fundamental interaction between an 'Application' and other data center elements according to the source material?", options: ["The application's primary role is to provide memory virtualization to the database management system.", "The application provides the logic for operations and communicates with the Operating System for database read/write actions.", "The application manages the physical network paths between the host and the storage array.", "The application interacts directly with the storage hardware to execute low-level read/write commands"], type: 'single', marks: 1.0 },
+        { id: 2, text: "In the context of interface protocols, how does SATA III significantly differ from its predecessor PATA?", options: ["SATA III supports hot swapping and offers a serial data transfer rate of up to .", "SATA III utilizes parallel transmission to achieve data rates up to .", "SATA III uses optical fiber cables to ensure point-to-point communication across long distances.", "SATA III is limited to but supports up to devices on a single bus."], type: 'single', marks: 1.0 },
+        { id: 3, text: "When comparing storage media, which characteristic is cited as a significant disadvantage of Tape storage compared to Flash memory?", options: ["Tape storage has higher durability and reliability ratings than Solid State Drives (SSD).", "Tape storage utilizes non-sequential data access, leading to unpredictable seek times.", "Tape storage has a higher initial cost per gigabyte than Flash memory.", "Tape storage is restricted to single application access at a time and suffers from sequential data access limitations."], type: 'single', marks: 1.0 },
+        { id: 4, text: "What is the specific role of the 'Actuator Arm Assembly' within a Hard Disk Drive (HDD)?", options: ["It manages the communication between the host and the drive firmware.", "It rotates the platters at a constant speed to align the sectors with the heads.", "It positions the R/W head at the exact location on the platter for data operations.", "It polarizes the magnetic material on the platter to record binary codes."], type: 'single', marks: 1.0 },
+        { id: 5, text: "A sector is defined as the smallest unit of storage on a platter. What information, beyond user data, is typically stored within a sector?", options: ["The firmware instructions for the Drive Controller Board.", "Sector number, platter number, and track number for identification.", "A mirror copy of the data stored in the adjacent sector on the opposite side of the platter.", "The entire file allocation table for the operating system's logical volume."], type: 'single', marks: 1.0 },
+        { id: 6, text: "In a RAID 5 environment, if an application generates 10,000 IOPS with a 70% write ratio, what is the total disk load?", options: ["A. 40,000 IOPS", "B. 45,000 IOPS", "C. 13,000 IOPS", "D. 31,000 IOPS"], type: 'single', marks: 1.0 },
+        { id: 7, text: "Why does a RAID 6 implementation result in a higher 'write penalty' compared to RAID 5?", options: ["RAID 6 requires data to be mirrored across three separate disks for every write.", "RAID 6 implementation is strictly software-based, increasing the CPU overhead on the host.", "RAID 6 utilizes sequential parity which forces the actuator arm to wait for a full platter rotation.", "RAID 6 must calculate and write two distinct sets of parity for every write operation."], type: 'single', marks: 1.0 },
+        { id: 8, text: "In an Intelligent Storage System (ISS), what is the function of 'Cache Vaulting'?", options: ["It uses a dedicated high-speed bus to mirror cache data between active-active controllers.", "It encrypts the cache contents to prevent unauthorized access by host applications.", "It protects data by dumping the contents of the cache onto physical disks during a power failure.", "It automatically flushes the cache when it reaches the 'High Watermark' level."], type: 'single', marks: 1.0 },
+        { id: 9, text: "How does 'Virtual Provisioning' (Thin LUNs) differ from 'Traditional Provisioning' in an Intelligent Storage System?", options: ["Thin LUNs are only available on Midrange active-passive storage arrays.", "Thin LUNs only consume physical storage when data is actually written by the application.", "Thin LUNs allocate the entire physical capacity to the host at the moment of creation.", "Traditional LUNs are limited to while Thin LUNs have no capacity limits."], type: 'single', marks: 1.0 },
+        { id: 10, text: "In Cache Management, what distinguishes 'Forced Flushing' from 'Idle Flushing'?", options: ["Forced flushing only clears 'read' data, whereas idle flushing clears 'write' data.", "Forced flushing is used exclusively in magnetic tape systems to prevent wear.", "Idle flushing is triggered when the 'High Watermark' is reached.", "Forced flushing occurs when the cache is nearly full, while idle flushing occurs during periods of low I/O activity."], type: 'single', marks: 1.0 },
+        { id: 11, text: "What defines a 'High-end' Intelligent Storage System architecture compared to a 'Midrange' system?", options: ["Midrange systems do not support RAID 6 protection.", "High-end systems feature active-active arrays where all controllers can process I/O simultaneously.", "High-end systems utilize active-passive controller arrays.", "High-end systems are only capable of traditional provisioning (MetaLUNs)."], type: 'single', marks: 1.0 },
+        { id: 12, text: "Regarding the evolution of storage architecture, what has been the primary driver behind the 'Information Explosion' mentioned in Lecture 01?", options: ["The generation of content by individuals on the internet and the growth of digital information.", "The reduction in the physical size of the 512 Byte sector.", "The shift from virtualized data centers back to classic data centers.", "The transition from serial to parallel interface protocols."], type: 'single', marks: 1.0 },
+        { id: 13, text: "According to the storage comparison table, which medium offers the highest 'Portability' but the lowest 'Speed'?", options: ["Flash Memory", "Magnetic Hard Disk", "Optical Storage", "Magnetic Tape"], type: 'single', marks: 1.0 },
+        { id: 14, text: "Which physical component of connectivity is responsible for providing the interface between the host and the storage network?", options: ["The DBMS (Database Management System)", "The Spindle Motor", "The Drive Controller Board", "The Host Interface Card"], type: 'single', marks: 1.0 },
+        { id: 15, text: "What is the primary benefit of using a 'Striped MetaLUN' compared to a 'Concatenated MetaLUN'?", options: ["Striped MetaLUNs provide a performance benefit in addition to increased capacity.", "Striped MetaLUNs use less cache memory than concatenated ones.", "Concatenated MetaLUNs are required for Thin Provisioning.", "Striped MetaLUNs provide higher durability against disk failures."], type: 'single', marks: 1.0 },
+        { id: 16, text: "Which protocol is described as a 'point-to-point serial protocol' that was developed to replace parallel SCSI?", options: ["iSCSI", "SAS (Serial Attached SCSI)", "FCIP (Fibre Channel over IP)", "IDE/ATA"], type: 'single', marks: 1.0 },
+        { id: 17, text: "What happens during a 'Read Hit' in an Intelligent Storage System cache?", options: ["The host is forced to wait until the 'Forced Flushing' process completes.", "The controller must fetch the data from the physical disk because it is not in the cache.", "The data in the cache is found to be corrupted and must be restored from the vault.", "The controller retrieves data directly from the cache, providing a faster response time to the host."], type: 'single', marks: 1.0 },
+        { id: 18, text: "Which cache management algorithm is most likely to discard data that has not been accessed for the longest period of time?", options: ["High Watermark", "MRU (Most Recently Used)", "LBA (Logical Block Addressing)", "LRU (Least Recently Used)"], type: 'single', marks: 1.0 },
+        { id: 19, text: "In HDD addressing, what is the 'Logical' method of mapping data units called?", options: ["LBA (Logical Block Addressing)", "ZBR (Zone Bit Recording)", "SCSI ID", "CHS (Cylinder-Head-Sector)"], type: 'single', marks: 1.0 },
+        { id: 20, text: "Which of the following is a characteristic of 'Flash Memory' storage according to the material?", options: ["It records data by polarizing magnetic regions on both sides of a platter.", "It uses laser techniques to write data onto a reflective surface.", "It is a special type of Electrically Erasable Programmable Read-Only Memory (EEPROM).", "It has the lowest cost per unit of capacity among all storage types."], type: 'single', marks: 1.0 },
+        { id: 21, text: "What does the 'Head Disk Assembly' (HDA) contain in a hard drive?", options: ["The cache RAM and the microprocessor circuitry.", "The Drive Controller Board and the host interface connectors.", "The rotating platters sealed in a protective case.", "The physical cables connecting the drive to the FC switch."], type: 'single', marks: 1.0 },
+        { id: 22, text: "Why does the Read/Write head 'never touch the surface' of the platter during operation?", options: ["Because the heads are fixed to the spindle and rotate with the platter.", "To prevent mechanical wear and damage to the magnetic coating at high speeds.", "To allow the magnetic field to dissipate before the next sector arrives.", "Because it uses lasers to read data from a distance, similar to optical drives."], type: 'single', marks: 1.0 },
+        { id: 23, text: "Which storage interface protocol traditionally used for host-to-host traffic now provides an opportunity for storage communication via protocols like iSCSI?", options: ["Advanced Technology Attachment (ATA)", "Fibre Channel (FC)", "Serial Attached SCSI (SAS)", "Internet Protocol (IP)"], type: 'single', marks: 1.0 },
+        { id: 24, text: "In an ISS, what are the two components of the 'Front-end'?", options: ["Physical disks and RAID controllers.", "LBA and CHS addressing logic.", "Controllers and Ports.", "Tag RAM and Data Store."], type: 'single', marks: 1.0 },
+        { id: 25, text: "What is the primary function of the 'Drive Controller Board' firmware?", options: ["It controls the power and speed of the spindle motor and manages communication with the host.", "It provides the user interface for the operating system to format the disk.", "It acts as the 'Tag RAM' for the intelligent storage system's global cache.", "It calculates the parity for RAID 5 write operations."], type: 'single', marks: 1.0 },
+        { id: 26, text: "How many Read/Write heads are typically associated with a single platter in a modern HDD?", options: ["Eight, to match the standard byte structure.", "Four, to allow for redundant reading of the same track.", "Two, one for each side of the platter.", "One, which moves between the top and bottom surfaces."], type: 'single', marks: 1.0 },
+        { id: 27, text: "Based on the 'Data Center Environment' mind map, which component is categorized under 'Host -> Software'?", options: ["Compute Virtualization", "Logical Volume Manager", "I/O Devices", "CPU and Memory"], type: 'single', marks: 1.0 },
+        { id: 28, text: "What is the key characteristic of 'Information' that distinguishes it from 'Data'?", options: ["Information is stored in binary code, while data is stored in analog format.", "Information requires a Database Management System (DBMS), while data does not.", "Information is processed and organized data that provides context and meaning.", "Information is always stored on magnetic media, while data is stored on optical media."], type: 'single', marks: 1.0 },
+        { id: 29, text: "In the context of RAID techniques, what is 'Mirroring'?", options: ["Compressing data before it is written to the platter to save space.", "Dividing data into blocks and spreading them across multiple disks to improve performance.", "Creating an exact copy of data on two or more disks to ensure high availability.", "Using mathematical calculations to reconstruct data from a failed drive."], type: 'single', marks: 1.0 },
+        { id: 30, text: "Which of the following is NOT one of the five core elements of a Data Center listed in the lectures?", options: ["Virtualization Layer", "Network", "Application", "DBMS (Database Management System)"], type: 'single', marks: 1.0 }
+    ],
+    answers: {
+        1: "The application provides the logic for operations and communicates with the Operating System for database read/write actions.",
+        2: "SATA III supports hot swapping and offers a serial data transfer rate of up to .",
+        3: "Tape storage is restricted to single application access at a time and suffers from sequential data access limitations.",
+        4: "It positions the R/W head at the exact location on the platter for data operations.",
+        5: "Sector number, platter number, and track number for identification.",
+        6: "D. 31,000 IOPS",
+        7: "RAID 6 must calculate and write two distinct sets of parity for every write operation.",
+        8: "It protects data by dumping the contents of the cache onto physical disks during a power failure.",
+        9: "Thin LUNs only consume physical storage when data is actually written by the application.",
+        10: "Forced flushing occurs when the cache is nearly full, while idle flushing occurs during periods of low I/O activity.",
+        11: "High-end systems feature active-active arrays where all controllers can process I/O simultaneously.",
+        12: "The generation of content by individuals on the internet and the growth of digital information.",
+        13: "Optical Storage",
+        14: "The Host Interface Card",
+        15: "Striped MetaLUNs provide a performance benefit in addition to increased capacity.",
+        16: "SAS (Serial Attached SCSI)",
+        17: "The controller retrieves data directly from the cache, providing a faster response time to the host.",
+        18: "LRU (Least Recently Used)",
+        19: "LBA (Logical Block Addressing)",
+        20: "It is a special type of Electrically Erasable Programmable Read-Only Memory (EEPROM).",
+        21: "The rotating platters sealed in a protective case.",
+        22: "To prevent mechanical wear and damage to the magnetic coating at high speeds.",
+        23: "Internet Protocol (IP)",
+        24: "Controllers and Ports.",
+        25: "It controls the power and speed of the spindle motor and manages communication with the host.",
+        26: "Two, one for each side of the platter.",
+        27: "Logical Volume Manager",
+        28: "Information is processed and organized data that provides context and meaning.",
+        29: "Creating an exact copy of data on two or more disks to ensure high availability.",
+        30: "Virtualization Layer"
+    }
+};
+
+export const SUBJECTS_DATA: Record<string, ModuleData> = {
     "DSNM": DSNM_DATA,
-    "WAN": WAN_DATA
+    "WAN": WAN_DATA,
+    "WC": WC_DATA,
+    "ISM": ISM_DATA
 };
