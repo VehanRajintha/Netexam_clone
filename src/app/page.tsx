@@ -12,7 +12,6 @@ export default function ExamPage() {
     const [modalModule, setModalModule] = useState<'DSNM' | 'WAN' | 'WC' | 'ISM' | null>(null);
     const [agreed, setAgreed] = useState(false);
     const [startIndex, setStartIndex] = useState(0);
-    const [cheatWarning, setCheatWarning] = useState<string | null>(null);
 
     const activeModule: ModuleData | null = activeModuleCode ? SUBJECTS_DATA[activeModuleCode] : null;
     const questions = activeModule?.questions || [];
@@ -27,72 +26,9 @@ export default function ExamPage() {
         return () => clearInterval(timer);
     }, [view]);
 
-    // Disable right click and copying/inspection across the application
-    useEffect(() => {
-        const handleContextMenu = (e: MouseEvent) => {
-            e.preventDefault();
-        };
-
-        const handleKeyDown = (e: KeyboardEvent) => {
-            // Prevent F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U (Inspection & Source)
-            if (
-                e.key === 'F12' ||
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-                (e.ctrlKey && e.key === 'u') ||
-                (e.metaKey && e.altKey && (e.key === 'i' || e.key === 'j' || e.key === 'c')) ||
-                (e.metaKey && e.key === 'u')
-            ) {
-                e.preventDefault();
-            }
-
-            // Prevent Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+P (Copy, Paste, Cut, Print)
-            if (
-                (e.ctrlKey || e.metaKey) &&
-                (e.key === 'c' || e.key === 'v' || e.key === 'x' || e.key === 'p')
-            ) {
-                e.preventDefault();
-            }
-        };
-
-        document.addEventListener('contextmenu', handleContextMenu);
-        document.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            document.removeEventListener('contextmenu', handleContextMenu);
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, []);
-
     useEffect(() => {
         if (timeLeft === 0 && view === 'quiz') handleSubmit();
     }, [timeLeft, view]);
-
-    // Anti-cheat: Tab-switching and Fullscreen exit detection
-    useEffect(() => {
-        if (view !== 'quiz') return;
-
-        const handleVisibilityChange = () => {
-            if (document.hidden) {
-                setCheatWarning("Tab switching detected! Your exam has been automatically submitted and flagged.");
-                handleSubmit();
-            }
-        };
-
-        const handleFullscreenChange = () => {
-            if (!document.fullscreenElement) {
-                setCheatWarning("Fullscreen mode exited! Your exam has been automatically submitted and flagged.");
-                handleSubmit();
-            }
-        };
-
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-            document.removeEventListener('fullscreenchange', handleFullscreenChange);
-        };
-    }, [view]);
 
     const formatTime = (seconds: number) => {
         const h = Math.floor(seconds / 3600);
@@ -118,20 +54,12 @@ export default function ExamPage() {
         setAgreed(false);
     };
 
-    const confirmStart = async () => {
+    const confirmStart = () => {
         if (!modalModule || !agreed) return;
         setActiveModuleCode(modalModule);
         setCurrentQuestionIdx(0);
         setSelectedAnswers({});
         setTimeLeft(3600);
-
-        try {
-            if (document.documentElement.requestFullscreen) {
-                await document.documentElement.requestFullscreen();
-            }
-        } catch (err) {
-            console.error("Fullscreen request failed", err);
-        }
 
         setView('quiz');
         closeModal();
@@ -148,41 +76,6 @@ export default function ExamPage() {
             </div>
         </header>
     );
-
-    const renderCheatWarning = () => {
-        if (!cheatWarning) return null;
-        return (
-            <div className="modal-backdrop" style={{ zIndex: 9999, background: 'rgba(50, 0, 0, 0.85)' }}>
-                <div className="modal-box" style={{ maxWidth: '450px', padding: '40px 30px', textAlign: 'center', background: '#fff' }}>
-                    <div style={{ fontSize: '3.5rem', marginBottom: '10px' }}>⚠️</div>
-                    <h2 style={{ fontSize: '1.8rem', color: '#b71c1c', margin: '0 0 15px 0', fontWeight: 800 }}>Security Violation</h2>
-                    <p style={{ fontSize: '1.05rem', color: '#333', marginBottom: '30px', lineHeight: 1.6 }}>
-                        {cheatWarning}
-                    </p>
-                    <button
-                        onClick={() => setCheatWarning(null)}
-                        style={{
-                            background: 'linear-gradient(135deg, #b71c1c, #800000)',
-                            color: '#fff',
-                            border: 'none',
-                            padding: '12px 35px',
-                            borderRadius: '8px',
-                            fontSize: '1rem',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            boxShadow: '0 4px 15px rgba(183, 28, 28, 0.4)',
-                            transition: 'all 0.2s'
-                        }}
-                    >
-                        Acknowledge
-                    </button>
-                    <div style={{ marginTop: '20px', fontSize: '0.8rem', color: '#888' }}>
-                        This incident has been recorded.
-                    </div>
-                </div>
-            </div>
-        );
-    };
 
     const renderFooter = () => (
         <footer className="home-footer">
@@ -340,7 +233,6 @@ export default function ExamPage() {
                                     <div className="modal-instruction-item"><span className="mi-icon">⏱</span><div><strong>Timed Exam</strong><br />60 minutes total. Timer starts immediately.</div></div>
                                     <div className="modal-instruction-item"><span className="mi-icon">🔄</span><div><strong>Free Navigation</strong><br />Jump between questions using the side panel.</div></div>
                                     <div className="modal-instruction-item"><span className="mi-icon">⚡</span><div><strong>Auto-Submit</strong><br />Quiz submits automatically when time runs out.</div></div>
-                                    <div className="modal-instruction-item" style={{ background: '#fff0f0', borderColor: '#ffcdd2', color: '#b71c1c' }}><span className="mi-icon">🔒</span><div><strong>Anti-Cheat Enabled</strong><br />Exam will launch in Full-Screen. Leaving Full-Screen or switching tabs will <strong>instantly auto-submit</strong> your exam.</div></div>
                                 </div>
                                 <div className="modal-disclaimer">
                                     <span className="modal-disclaimer-icon">⚠</span>
@@ -360,7 +252,6 @@ export default function ExamPage() {
                         </div>
                     </div>
                 )}
-                {renderCheatWarning()}
             </div>
         );
     }
@@ -400,7 +291,6 @@ export default function ExamPage() {
                     </a>
                 </main>
                 {renderFooter()}
-                {renderCheatWarning()}
             </div>
         );
     }
@@ -473,7 +363,6 @@ export default function ExamPage() {
                     </div>
                 </aside>
             </main>
-            {renderCheatWarning()}
         </div>
     );
 }
