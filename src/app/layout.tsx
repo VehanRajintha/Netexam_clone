@@ -1,4 +1,5 @@
 import './globals.css'
+import ContextMenuBlocker from '@/components/ContextMenuBlocker'
 
 export const metadata = {
     title: 'SLIIT Netexam',
@@ -13,6 +14,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body>
+                <ContextMenuBlocker />
                 <div className="mobile-restriction-overlay">
                     <div className="mobile-restriction-content">
                         <div className="mobile-restriction-icon">💻</div>
