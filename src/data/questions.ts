@@ -12,11 +12,13 @@ export interface ModuleData {
     code: string;
     questions: Question[];
     answers: Record<number, string>;
+    notebookLlmLink?: string;
 }
 
 export const DSNM_DATA: ModuleData = {
     title: "DSNM - Distributed Systems & Network Management",
     code: "DSNM",
+    notebookLlmLink: "https://notebooklm.google.com/notebook/6ddaf389-3cd6-4111-b923-8a073b4f67e9",
     questions: [
         { id: 1, text: "Which specific area of the ISO Network Management framework is concerned with gathering statistics to establish usage quotas and ensuring users have a fair share of resources?", options: ["Configuration Management", "Fault Management", "Accounting Management", "Performance Management"], type: 'single', marks: 1.0 },
         { id: 2, text: "In the context of fault management, what is a primary disadvantage of relying solely on an interrupt-driven approach for data collection?", options: ["It consumes significantly higher bandwidth than polling.", "It is unable to detect critical events like link failures.", "It relies on periodic test packets that distort network behavior.", "It may not facilitate effective fault management due to its reactive nature."], type: 'single', marks: 1.0 },
@@ -80,6 +82,7 @@ export const DSNM_DATA: ModuleData = {
 export const WAN_DATA: ModuleData = {
     title: "WAN - Wide Area Networking",
     code: "WAN",
+    notebookLlmLink: "https://notebooklm.google.com/notebook/6186058f-19af-435c-961c-15d8f97b46da",
     questions: [
         { id: 1, text: "Given the IP address 196.88.10.12/28, what is the calculated network address for the subnet it belongs to?", options: ["196.88.10.1", "196.88.10.0", "196.88.0.0", "196.88.10.8"], type: 'single', marks: 1.0 },
         { id: 2, text: "For the subnet containing 196.88.10.12/28, what is the specific broadcast address?", options: ["196.88.10.255", "196.88.10.31", "196.88.10.16", "196.88.10.15"], type: 'single', marks: 1.0 },
@@ -139,6 +142,7 @@ export const WAN_DATA: ModuleData = {
 export const WC_DATA: ModuleData = {
     title: "WC - Wireless Communications",
     code: "WC",
+    notebookLlmLink: "https://notebooklm.google.com/notebook/43e5145d-dfbc-4c80-b48e-b6922b787615",
     questions: [
         { id: 1, text: "", imageUrl: "/wc_q1.png", options: ["A", "B", "C", "D"], type: 'single', marks: 1.0 },
         { id: 2, text: "Which signal propagation model is considered complex and impractical for most general wireless analysis despite its theoretical foundations?", options: ["Ray tracing models", "Maxwell's equations", "Free space models", "Single-slope path loss exponent model"], type: 'single', marks: 1.0 },
@@ -198,6 +202,7 @@ export const WC_DATA: ModuleData = {
 export const ISM_DATA: ModuleData = {
     title: "ISM - Information Storage and Management",
     code: "ISM",
+    notebookLlmLink: "https://notebooklm.google.com/notebook/162655d6-ef35-4454-845e-7db34f59c871",
     questions: [
         { id: 1, text: "Which of the following describes the fundamental interaction between an 'Application' and other data center elements according to the source material?", options: ["The application's primary role is to provide memory virtualization to the database management system.", "The application provides the logic for operations and communicates with the Operating System for database read/write actions.", "The application manages the physical network paths between the host and the storage array.", "The application interacts directly with the storage hardware to execute low-level read/write commands"], type: 'single', marks: 1.0 },
         { id: 2, text: "In the context of interface protocols, how does SATA III significantly differ from its predecessor PATA?", options: ["SATA III supports hot swapping and offers a serial data transfer rate of up to .", "SATA III utilizes parallel transmission to achieve data rates up to .", "SATA III uses optical fiber cables to ensure point-to-point communication across long distances.", "SATA III is limited to but supports up to devices on a single bus."], type: 'single', marks: 1.0 },

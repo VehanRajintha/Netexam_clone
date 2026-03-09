@@ -169,6 +169,31 @@ export default function ExamPage() {
                                         <button className="start-btn" onClick={() => openModal(code)} style={{ padding: '10px 30px', fontSize: '0.95rem' }}>
                                             Start Attempt
                                         </button>
+                                        {SUBJECTS_DATA[code].notebookLlmLink && (
+                                            <div style={{ marginTop: '15px' }}>
+                                                <a
+                                                    href={SUBJECTS_DATA[code].notebookLlmLink}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{
+                                                        display: 'inline-block',
+                                                        padding: '8px 20px',
+                                                        backgroundColor: '#f0f4f8',
+                                                        color: '#0056b3',
+                                                        textDecoration: 'none',
+                                                        borderRadius: '5px',
+                                                        fontSize: '0.85rem',
+                                                        fontWeight: '500',
+                                                        border: '1px solid #cce5ff',
+                                                        transition: 'background-color 0.2s',
+                                                    }}
+                                                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e6f0fa'}
+                                                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f0f4f8'}
+                                                >
+                                                    📚 Learn with Notebook LLM
+                                                </a>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}
